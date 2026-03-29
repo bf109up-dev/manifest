@@ -1,0 +1,30 @@
+header:
+    version: 14
+    includes:
+        - kas-rpi3.yml
+overrides:
+    repos:
+        poky:
+            url: https://github.com/bf109up-dev/poky.git
+            ref: b68050f511efa8c4f3b24d05c8168d1ad23e9a2e
+            layers:
+                meta:
+                meta-poky:
+                meta-yocto-bsp:
+        meta-openembedded:
+            url: https://git.openembedded.org/meta-openembedded
+            ref: 06f846a325fde423bb0a6d49d771d8c1e144d7eb
+            layers:
+                meta-oe:
+                meta-python:
+                meta-networking:
+                meta-filesystems:
+        meta-raspberrypi:
+            url: https://github.com/bf109up-dev/meta-raspberrypi.git
+            ref: 2c646d29912dcc873469a57b1c207e1549c5094d
+        meta-rauc:
+            url: https://github.com/rauc/meta-rauc
+            ref: fa18cf1fb2840ba23df0fe79f38ffca4bf7a4816
+        meta-product:
+            url: https://github.com/bf109up-dev/meta-product.git
+            ref: 99c85c57346114e88cae9b254337543ffdd3375e

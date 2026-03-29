@@ -1,0 +1,33 @@
+header:
+    version: 14
+    includes:
+        - kas-qemuarm64.yml
+repos:
+  poky:
+    url: https://github.com/bf109up-dev/poky.git
+    ref: b68050f511efa8c4f3b24d05c8168d1ad23e9a2e
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-openembedded:
+    url: https://git.openembedded.org/meta-openembedded
+    ref: 06f846a325fde423bb0a6d49d771d8c1e144d7eb
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-filesystems:
+
+  meta-rauc:
+    url: https://github.com/rauc/meta-rauc
+    ref: fa18cf1fb2840ba23df0fe79f38ffca4bf7a4816
+
+  meta-product:
+    url: https://github.com/bf109up-dev/meta-product.git
+    ref: 99c85c57346114e88cae9b254337543ffdd3375e
+
+  meta-qemuarm64:
+    url: https://github.com/bf109up-dev/meta-qemuarm64.git
+    ref: 9bc91a6c8e6e92e32a39041d01331aec34ad2637

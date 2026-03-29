@@ -1,0 +1,55 @@
+header:
+  version: 14
+
+distro: product
+target: product-test0
+machine: qemuarm64
+
+repos:
+  poky:
+    path: poky
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+  meta-openembedded:
+    path: meta-openembedded
+    layers:
+      meta-oe:
+      meta-python:
+      meta-multimedia:
+      meta-networking:
+      meta-filesystems:
+      meta-perl:
+      meta-webserver:
+  meta-rauc:
+    path: meta-rauc
+  meta-product:
+    path: meta-product
+  meta-qemuarm64:
+    path: meta-qemuarm64
+
+local_conf_header:
+  cpu_limits: |
+    BB_NUMBER_THREADS = "10"
+    PARALLEL_MAKE = "-j 10"
+    LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+    # QEMU 가상머신 부팅을 위한 메타데이터 파일 생성 옵션 활성화
+    IMAGE_CLASSES += "qemuboot"
+
+    # CIP Real-Time 6.12.57 커널 제공자 설정
+    PREFERRED_PROVIDER_virtual/kernel = "linux-cip-rt"
+
+  qemuarm64_output: |
+    # DNS/네트워크 지연 대응을 위한 wget 재시도 보강
+    FETCHCMD_wget:append = " -t 10 -T 30"
+    # qemuarm64 전용 빌드 및 미러 경로 설정 (scarthgap/machine/qemuarm64 하위)
+    TMPDIR = "${TOPDIR}/tmp"
+    DL_DIR = "${TOPDIR}/../../../machine/qemuarm64/mirror/downloads"
+    SSTATE_DIR = "${TOPDIR}/../../../machine/qemuarm64/mirror/sstate-cache"
+    BB_GENERATE_MIRROR_TARBALLS = "1"
+    IMAGE_FSTYPES:append = " tar.bz2"
+
+  qemuarm64_samples: |
+    # Hello Mod (Kernel Module) and Hello App (User Space) 추가
+    IMAGE_INSTALL:append = " hello-mod hello-app"

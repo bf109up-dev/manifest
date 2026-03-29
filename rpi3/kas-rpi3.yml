@@ -1,0 +1,55 @@
+header:
+  version: 14
+
+distro: product
+target: product-test0
+machine: raspberrypi3-64
+
+repos:
+  poky:
+    path: poky
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+  meta-openembedded:
+    path: meta-openembedded
+    layers:
+      meta-oe:
+      meta-python:
+      meta-multimedia:
+      meta-networking:
+      meta-filesystems:
+      meta-perl:
+      meta-webserver:
+  meta-rauc:
+    path: meta-rauc
+  meta-product:
+    path: meta-product
+  meta-raspberrypi:
+    path: meta-raspberrypi
+
+local_conf_header:
+  cpu_limits: |
+    BB_NUMBER_THREADS = "4"
+    PARALLEL_MAKE = "-j 4"
+    LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+    # QEMU 가상머신 부팅을 위한 메타데이터 파일 생성 옵션 활성화
+    IMAGE_CLASSES += "qemuboot"
+
+  rpi3_image: |
+    # ---- eMMC/SD Partition Layout (RPi3 전용) ----
+    WKS_FILE = "product-test0.wks"
+    IMAGE_FSTYPES = "wic wic.bz2 wic.bmap tar.bz2"
+    # 루트 파일시스템 최대 크기 명시적 상향 (512MB) 및 여유 공간 계수 설정
+    IMAGE_ROOTFS_MAXSIZE = "524288"
+    IMAGE_OVERHEAD_FACTOR = "1.5"
+
+  rpi3_output: |
+    # DNS/네트워크 지연 대응을 위한 wget 재시도 보강
+    FETCHCMD_wget:append = " -t 10 -T 30"
+    # rpi3 전용 빌드 및 미러 경로 설정 (scarthgap/machine/rpi3 하위)
+    TMPDIR = "${TOPDIR}/tmp"
+    DL_DIR = "${TOPDIR}/../../../machine/rpi3/mirror/downloads"
+    SSTATE_DIR = "${TOPDIR}/../../../machine/rpi3/mirror/sstate-cache"
+    BB_GENERATE_MIRROR_TARBALLS = "1"
