@@ -1,0 +1,13 @@
+header:
+  version: 14
+
+repos:
+  poky:
+    # 'scarthgap' branch latest commit will be locked here
+    commit:  # kas lock --update kas/wisenet-dev.yml 명령어로 자동 생성 가능합니다.
+  
+  meta-openembedded:
+    commit: 
+  
+  meta-raspberrypi:
+    commit: 

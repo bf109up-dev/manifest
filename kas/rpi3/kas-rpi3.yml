@@ -19,9 +19,6 @@ repos:
       meta-python:
       meta-multimedia:
       meta-networking:
-      meta-filesystems:
-      meta-perl:
-      meta-webserver:
   meta-rauc:
     path: meta-rauc
   meta-product:
@@ -50,6 +47,6 @@ local_conf_header:
     FETCHCMD_wget:append = " -t 10 -T 30"
     # rpi3 전용 빌드 및 미러 경로 설정 (scarthgap/machine/rpi3 하위)
     TMPDIR = "${TOPDIR}/tmp"
-    DL_DIR = "${TOPDIR}/../../../machine/rpi3/mirror/downloads"
-    SSTATE_DIR = "${TOPDIR}/../../../machine/rpi3/mirror/sstate-cache"
+    DL_DIR = "${TOPDIR}/../mirror/downloads"
+    SSTATE_DIR = "${TOPDIR}/../mirror/sstate-cache"
     BB_GENERATE_MIRROR_TARBALLS = "1"
