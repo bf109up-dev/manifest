@@ -67,8 +67,6 @@ local_conf_header:
     SSTATE_MIRRORS ?= "file://.* file:///home/yang/work/yocto/mirror/github/manifest/5146dd2c/sstate-cache/PATH"
   
   qemuarm64_output: |
-    # DNS/네트워크 지연 대응을 위한 wget 재시도 보강
-    FETCHCMD_wget:append = " -t 10 -T 30"
     # qemuarm64 전용 빌드 및 미러 경로 설정 (scarthgap/output/qemuarm64 하위)
     TMPDIR = "${TOPDIR}/tmp"
     DL_DIR = "${TOPDIR}/../../../output/qemuarm64/mirror/downloads"
