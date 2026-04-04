@@ -64,9 +64,9 @@ local_conf_header:
     # Enable own-mirrors class to use the local download mirror
     INHERIT += "own-mirrors"
     # Set the local path for downloaded source tarballs
-    SOURCE_MIRROR_URL = "file:///home/yang/work/yocto/mirror/github/manifest/83c99cee/downloads"
+    SOURCE_MIRROR_URL = "file:///home/yang/work/yocto/mirror/github/manifest/qemuarm64-r202604041956/downloads"
     # Set the local path for the sstate cache mirror
-    SSTATE_MIRRORS ?= "file://.* file:///home/yang/work/yocto/mirror/github/manifest/83c99cee/sstate-cache/PATH"
+    SSTATE_MIRRORS ?= "file://.* file:///home/yang/work/yocto/mirror/github/manifest/qemuarm64-r202604041956/sstate-cache/PATH"
   
   qemuarm64_output: |
     # qemuarm64 전용 빌드 및 미러 경로 설정 (scarthgap/output/qemuarm64 하위)
