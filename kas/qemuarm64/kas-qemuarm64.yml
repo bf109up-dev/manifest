@@ -1,5 +1,8 @@
 header:
   version: 14
+  includes:
+   - kas-qemuarm64-lock.yml
+
 
 distro: product
 target: product-test0
@@ -8,12 +11,17 @@ machine: qemuarm64
 repos:
   poky:
     path: poky
+    url: https://github.com/bf109up-dev/poky.git
+    branch: scarthgap
     layers:
       meta:
       meta-poky:
       meta-yocto-bsp:
+
   meta-openembedded:
     path: meta-openembedded
+    url: https://github.com/bf109up-dev/meta-openembedded.git
+    branch: scarthgap
     layers:
       meta-oe:
       meta-python:
@@ -22,12 +30,20 @@ repos:
       meta-filesystems:
       meta-perl:
       meta-webserver:
+
   meta-rauc:
+    url: https://github.com/bf109up-dev/meta-rauc.git
+    branch: scarthgap
     path: meta-rauc
+
   meta-product:
+    url: https://github.com/bf109up-dev/meta-product.git
+    branch: scarthgap
     path: meta-product
+  
   meta-qemuarm64:
     path: meta-qemuarm64
+
 
 local_conf_header:
   cpu_limits: |
@@ -46,9 +62,9 @@ local_conf_header:
     # Enable own-mirrors class to use the local download mirror
     INHERIT += "own-mirrors"
     # Set the local path for downloaded source tarballs
-    SOURCE_MIRROR_URL = "file:///home/yang/work/yocto/ai-agent_test0/scarthgap_local_repo/machine/qemuarm64/mirror/downloads"
+    SOURCE_MIRROR_URL = "file:///home/yang/work/yocto/mirror/github/manifest/5146dd2c/downloads"
     # Set the local path for the sstate cache mirror
-    SSTATE_MIRRORS ?= "file://.* file:///home/yang/work/yocto/ai-agent_test0/scarthgap_local_repo/machine/qemuarm64/mirror/sstate-cache/PATH"
+    SSTATE_MIRRORS ?= "file://.* file:///home/yang/work/yocto/mirror/github/manifest/5146dd2c/sstate-cache/PATH"
   
   qemuarm64_output: |
     # DNS/네트워크 지연 대응을 위한 wget 재시도 보강
