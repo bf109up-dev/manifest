@@ -42,6 +42,8 @@ repos:
     path: meta-product
   
   meta-qemuarm64:
+    url: https://github.com/bf109up-dev/meta-qemuarm64.git
+    branch: scarthgap    
     path: meta-qemuarm64
 
 

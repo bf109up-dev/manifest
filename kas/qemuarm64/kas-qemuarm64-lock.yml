@@ -10,3 +10,5 @@ overrides:
             commit: fa18cf1fb2840ba23df0fe79f38ffca4bf7a4816
         meta-product:
             commit: 36189855d032244457d6c972c9e6397b8d179276
+        meta-qemuarm64:
+            commit: 08850ad0a3a664f8fbcc9c9e78315691cbd0626e
