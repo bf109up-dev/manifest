@@ -8,7 +8,8 @@ echo "Updating kas lock file for machine: ${MACHINE}"
 LOCK_FILE="kas/${MACHINE}/kas-${MACHINE}-lock.yml"
 DATED_LOCK_FILE="kas/${MACHINE}/kas-${MACHINE}-lock-${DATE}.yml"
 
-kas dump --update --lock kas/${MACHINE}/kas-${MACHINE}.yml > ${LOCK_FILE}
+kas dump --update --lock kas/${MACHINE}/kas-${MACHINE}.yml > ${LOCK_FILE}.tmp
+mv ${LOCK_FILE}.tmp ${LOCK_FILE}
 cp ${LOCK_FILE} ${DATED_LOCK_FILE}
 
 
