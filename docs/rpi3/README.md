@@ -1,90 +1,85 @@
-# Raspberry Pi 3 (64-bit scarthgap) Yocto Project Guide
+# AI Agent Distro - Raspberry Pi 3 (64-bit scarthgap)
 
-본 저장소는 `kas` 툴을 활용하여 Raspberry Pi 3 타겟의 Headless Yocto 빌드 환경(`product-test0`)을 구축, 빌드하고 테스트하는 방법을 안내합니다.
+이 저장소는 `raspberrypi3-64` 하드웨어 환경을 위한 **AI Agent Distro 1.0.0** 빌드 및 개발 환경을 관리합니다. `kas` 툴을 활용하여 선언적이고 재현 가능한 빌드 환경을 제공하며, QEMU 에뮬레이터와 물리 보드 모두를 지원합니다.
 
 ---
 
-## 🚀 1. 초기 빌드 (Initial Build)
+## 🚀 1. 빠른 시작 (Quick Start)
 
-아직 아무런 소스/캐시가 다운로드되지 않은 초기 상태에서 Yocto 전체 시스템을 빌드하는 방법입니다. 코어 수 제한을 두어 시스템 마비를 방지할 수 있습니다.
+본 프로젝트는 통합 캐시 및 미러 설정을 지원하므로, 초기 빌드 시에도 매우 빠른 속도로 빌드가 가능합니다.
 
+### 시스템 빌드
 ```bash
-cd rpi3
+# 프로젝트 루트(manifest)로 이동
+cd /home/yang/work/yocto/ai-agent_test0/test1/manifest
 
-# kas 패키지가 없다면 설치
-pip3 install --user kas 
-
-# 0~8 물리 코어만 사용하여 전체 시스템 빌드 실행 (Raspberry Pi 3 타겟)
-taskset -c 0-8 ~/.local/bin/kas build kas-rpi3.yml
-
-# QEMU ARM64 에뮬레이터 타겟 빌드 시
-# taskset -c 0-8 ~/.local/bin/kas build kas-qemuarm64.yml
+# 전용 빌드 스크립트를 사용하여 빌드 실행 (RPI3 타겟)
+./scripts/build.sh rpi3
 ```
 
-> **📌 진행 상황 로깅 & 모니터링 팁**
-> 터미널에 빌드 과정을 계속 띄워두고 싶지 않다면, 백그라운드로 넘기고 로그로 뺄 수 있습니다.
+> **참고**: 직접 `kas` 명령어를 사용하려면 아래와 같이 실행합니다.
 > ```bash
-> taskset -c 0-8 kas build kas-rpi3.yml:kas-rpi3-lock.yml > console-latest.log 2>&1 &
-> tail -f console-latest.log
+> kas build kas/rpi3/kas-rpi3.yml
 > ```
-> *빌드가 다 끝나면 `rpi3/build/tmp/deploy/images/raspberrypi3-64/` 위치에 이미지 파일이 생성됩니다.* 
 
 ---
 
-## ⚡ 2. 캐시 빌드 (Cache Build / Re-build)
+## 🛠️ 2. 주요 커스텀 기능 (Custom Features)
 
-Yocto 환경은 `rpi3/mirror/` 경로 하위에 소스 압축 파일(`downloads/`)과 빌드 인스턴스 결과물(`sstate-cache/`)을 별도로 보관합니다. 다른 PC나 컨테이너에서 이 폴더를 동기화한 뒤 동일하게 빌드를 누르면 95% 이상 캐시 히트가 터지며 빌드 시간이 파격적으로 줄어듭니다.
+현재 RPI3 이미지(`product-test0`)에는 개발 및 테스트를 위한 다음 기능들이 포함되어 있습니다.
 
-- **안전한 Lockfile 기반 재현 빌드**: 
-  이전에 성공했던 완벽히 동일한 환경(Git 커밋 해시 고정)으로 캐시를 융합해서 빌드하고 싶다면, 원본과 `.lock` 파일을 콜론(`:`)으로 합쳐 실행합니다.
-  ```bash
-  taskset -c 0-8 kas build kas-rpi3.yml:kas-rpi3-lock.yml
-  ```
-  *(수정된 코드가 있다면 이 단계를 5분 이내에 끝내고 펌웨어 이미지를 재조립합니다.)*
+1.  **Kernel**: `linux-raspberrypi` (공식 라즈베리 파이 커널 6.6 기반)
+2.  **External Module**: `hello-mod` (부팅 시 자동 로드 확인용 커널 모듈 - `meta-product` 공용)
+3.  **User Application**: `hello` (C 기반 "Hello, AI Agent Distro!" 출력 어플리케이션 - `meta-product` 공용)
+4.  **Dev-Friendly**: 비밀번호 없는 root 로그인 및 SSH 접근 환경
 
 ---
 
-## 💻 3. QEMU 가상 머신 테스트 (QEMU Emulation)
+## 💾 3. SD 카드 플래싱 (SD Fusing)
 
-SD 카드에 굽기 전에 먼저 QEMU 유틸리티를 활용해서 시뮬레이션 환경에서 부팅과 프로그램 상태를 점검할 수 있습니다. 본 환경은 `kas-rpi3.yml`에 `IMAGE_CLASSES += "qemuboot"` 설정을 적용하여 곧바로 에뮬레이션 부팅이 가능합니다.
+빌드가 완료된 최종 이미지(`.wic.bz2`)를 실제 보드 구동을 위해 SD 카드에 기록하는 방법입니다.
 
+### 권장 방식: `bmaptool` 사용
 ```bash
-# kas shell에서 제공하는 runqemu 명령어를 통해 빌드된 이미지 부팅 실행
-~/.local/bin/kas shell kas-qemuarm64.yml -c "runqemu nographic"
-```
+# 빌드 결과물 경로로 이동
+cd output/rpi3/build/tmp/deploy/images/raspberrypi3-64/
 
-> **종료 방법**: QEMU 가상머신 테스트를 끝낼 때 커맨드 모드라면 `root` 로그인 후 `poweroff`를 입력하거나, `Ctrl+A` 누르고 `X`를 입력하면 가상머신 테스트가 즉시 종료됩니다.
-
----
-
-## 💾 4. SD 카드 플래싱 (SD Fusing)
-
-빌드가 완료된 최종 이미지를(확장자 `.wic.bz2`) 실제 Raspberry Pi 3 구동을 위해 SD 카드에 복사하는 단계입니다.
-`rpi3/build/tmp/deploy/images/raspberrypi3-64/` 디렉토리를 참조합니다.
-
-> ⚠️ [주의] 아래 명령어의 `/dev/sdX` 부분을 자신의 실제 SD 카드 마운트 드라이브명(`lsblk` 명령어로 확인. 예: `/dev/sdb`, `/dev/mmcblk0` 등)으로 정확하게 변경해야 합니다! 파티션 경로(`/dev/sdb1`)가 아니라 **디바이스 풀 경로(`/dev/sdb`)**를 써주세요.
-
-### 옵션 A) 기본 방식: `dd` 명령어 사용 (가장 범용적)
-Ubuntu 및 Mac 등 기본 내장 툴을 사용한 Fusing 방법입니다.
-```bash
-# bz2 압축을 풀면서 동시에 지정한 장치에 블록 단위로 기록
-bzcat build/tmp/deploy/images/raspberrypi3-64/product-test0-raspberrypi3-64*.wic.bz2 | sudo dd of=/dev/sdX bs=4M status=progress
-
-# 버퍼가 모두 디스크에 정상 쓰여졌는지 확인 (Sync)
-sudo sync
-```
-
-### 옵션 B) 초고속 방식: `bmaptool` 사용 (권장)
-Yocto 환경에서는 비어있는 디스크 공간을 건너뛰고 오직 기록된 파일만 전송하는 bmap 메타데이터 파일(`.wic.bmap`)을 함께 생성합니다. `dd` 명령어보다 10배 이상 빠르고 안전합니다.
-
-```bash
-# Ubuntu의 경우: sudo apt install bmap-tools 
-sudo bmaptool copy build/tmp/deploy/images/raspberrypi3-64/product-test0-raspberrypi3-64*.wic.bz2 /dev/sdX
+# SD 카드 드라이브(/dev/sdX)에 고속 기록
+sudo bmaptool copy product-test0-raspberrypi3-64.wic.bz2 /dev/sdX
 ```
 
 ---
-**유지보수 기록**
-- 프로젝트 루트: `rpi3/`
-- Target Board: Raspberry Pi 3 (`raspberrypi3-64`) & QEMU ARM64 (`qemuarm64`)
-- Yocto Branch: `scarthgap`
-- CPU Limits: `taskset -c 0-8` 및 `BB_NUMBER_THREADS="9"` 강제
+
+## 📚 4. 개발 및 포팅 가이드 (Documentation)
+
+상세한 개발 절차 및 RPI3 특화 시스템 구조는 `docs/rpi3/` 디렉토리의 가이드를 참조하십시오.
+
+- **[RPI3 포팅 및 패키지 관리 종합 가이드 (Porting.md)](./Porting.md)**
+    - 커널 설정 및 디렉토리 구조 안내
+    - 신규 드라이버 및 앱 레시피 적용법
+    - **DEPLOY** 및 **WORKDIR** 물리 경로 안내
+
+---
+
+## 📁 5. 프로젝트 및 빌드 디렉토리 구조 (Directory Structure)
+
+### 🍱 소스 및 설정 레이어 (Source Layers)
+| 경로 | 구분 | 상세 역할 |
+| :--- | :--- | :--- |
+| **`kas/rpi3/`** | 프로젝트 설정 | RPI3용 빌드 선언서(`.yml`) 및 락 파일 보관 |
+| **`meta-rpi3/`** | 보드 지원 (Wrapper) | RPI3 특화 설정 및 래퍼 레이어 |
+| **`meta-raspberrypi/`** | 공식 BSP | 라즈베리 파이 공식 보드 지원 레이어 |
+| **`meta-product/`** | 제품 사양 | 제품 이미지 정의 및 공통 패키지(`hello` 등) 관리 |
+
+### 🏗️ 빌드 및 캐시 인프라 (Unified Mirror)
+본 프로젝트는 **통합 글로벌 미러(`r202604051543`)**를 사용하여 QEMU와 RPI3 간 캐시를 공유합니다.
+
+| 구분 | 물리적 경로 | 주요 내용 및 용도 |
+| :--- | :--- | :--- |
+| **Main Build** | `output/rpi3/build/` | 비트베이크 빌드가 실제로 일어나는 작업 공간 |
+| **Deploy** | `.../build/tmp/deploy/images/` | 커널 및 SD 카드용 **최종 이미지** 생성 위치 |
+| **Global Mirror** | `/home/yang/work/yocto/mirror/.../r202604051543/` | 통합 다운로드 및 SState 캐시 저장소 |
+
+---
+**Maintainer**: AI Agent Team
+**Target**: Raspberry Pi 3 (scarthgap branch)
