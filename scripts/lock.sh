@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MACHINE=${1:-qemuarm64}
-DATE=$(date +%Y%m%d)
+DATE=$(date +%Y%m%d%H%M)
 
 echo "Updating kas lock file for machine: ${MACHINE}"
 
