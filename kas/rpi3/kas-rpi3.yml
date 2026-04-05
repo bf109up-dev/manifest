@@ -1,12 +1,11 @@
 header:
   version: 14
   includes:
-   - kas-qemuarm64-lock.yml
-
+   - kas-rpi3-lock.yml
 
 distro: product
 target: product-test0
-machine: qemuarm64
+machine: raspberrypi3-64
 
 repos:
   poky:
@@ -41,26 +40,28 @@ repos:
     branch: scarthgap
     path: meta-product
   
-  meta-qemuarm64:
-    url: https://github.com/bf109up-dev/meta-qemuarm64.git
+  meta-raspberrypi:
+    url: https://github.com/bf109up-dev/meta-raspberrypi.git
     branch: scarthgap    
-    path: meta-qemuarm64
+    path: meta-raspberrypi
 
+  meta-rpi3:
+    url: https://github.com/bf109up-dev/meta-rpi3.git
+    branch: scarthgap    
+    path: meta-rpi3
 
 local_conf_header:
   cpu_limits: |
     BB_NUMBER_THREADS = "10"
     PARALLEL_MAKE = "-j 10"
     LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
-    # QEMU 가상머신 부팅을 위한 메타데이터 파일 생성 옵션 활성화
-    IMAGE_CLASSES += "qemuboot"
 
-    # CIP Real-Time 6.12.57 커널 제공자 설정
-    PREFERRED_PROVIDER_virtual/kernel = "linux-cip-rt"
+    # RPI용 커널 제공자 설정 (기존 linux-cip-rt에서 변경)
+    PREFERRED_PROVIDER_virtual/kernel = "linux-raspberrypi"
     # Select specific version of rauc-conf to resolve layer conflict
     BBMASK += "meta-rauc/recipes-core/rauc/rauc-conf.bb"
   
-  qemuarm64_mirror: |
+  rpi3_mirror: |
     # Enable own-mirrors class to use the local download mirror
     INHERIT += "own-mirrors"
     # Set the local path for downloaded source tarballs
@@ -68,14 +69,14 @@ local_conf_header:
     # Set the local path for the sstate cache mirror
     SSTATE_MIRRORS ?= "file://.* file:///home/yang/work/yocto/mirror/github/manifest/r202604051543/sstate-cache/PATH"
   
-  qemuarm64_output: |
-    # qemuarm64 전용 빌드 및 미러 경로 설정 (scarthgap/output/qemuarm64 하위)
+  rpi3_output: |
+    # rpi3 전용 빌드 및 미러 경로 설정 (scarthgap/output/rpi3 하위)
     TMPDIR = "${TOPDIR}/tmp"
-    DL_DIR = "${TOPDIR}/../../../output/qemuarm64/mirror/downloads"
-    SSTATE_DIR = "${TOPDIR}/../../../output/qemuarm64/mirror/sstate-cache"
+    DL_DIR = "${TOPDIR}/../../../output/rpi3/mirror/downloads"
+    SSTATE_DIR = "${TOPDIR}/../../../output/rpi3/mirror/sstate-cache"
     BB_GENERATE_MIRROR_TARBALLS = "1"
     IMAGE_FSTYPES:append = " tar.bz2"
 
-  qemuarm64_samples: |
+  rpi3_samples: |
     # Hello Mod (Kernel Module) and Hello App (User Space) 추가
     IMAGE_INSTALL:append = " hello-mod hello"

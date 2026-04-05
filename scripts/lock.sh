@@ -1,9 +1,14 @@
 #!/bin/bash
-DATE=$(date +%Y%m%d)
-LOCK_FILE="kas/qemuarm64/kas-qemuarm64-lock.yml"
-DATED_LOCK_FILE="kas/qemuarm64/kas-qemuarm64-lock-${DATE}.yml"
 
-kas dump --update --lock kas/qemuarm64/kas-qemuarm64.yml > ${LOCK_FILE}
+MACHINE=${1:-qemuarm64}
+DATE=$(date +%Y%m%d)
+
+echo "Updating kas lock file for machine: ${MACHINE}"
+
+LOCK_FILE="kas/${MACHINE}/kas-${MACHINE}-lock.yml"
+DATED_LOCK_FILE="kas/${MACHINE}/kas-${MACHINE}-lock-${DATE}.yml"
+
+kas dump --update --lock kas/${MACHINE}/kas-${MACHINE}.yml > ${LOCK_FILE}
 cp ${LOCK_FILE} ${DATED_LOCK_FILE}
 
 

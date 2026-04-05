@@ -5,3 +5,5 @@ meta-product/
 meta-qemuarm64/
 output/
 
+meta-raspberrypi/
+meta-rpi3/
