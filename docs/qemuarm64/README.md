@@ -11,16 +11,19 @@
 ### 시스템 빌드
 ```bash
 # 프로젝트 루트(scarthgap)로 이동
-cd /home/yang/work/yocto/ai-agent_test0/scarthgap
+# 프로젝트 루트(manifest)로 이동
+cd /home/yang/work/yocto/test-20260409/manifest
 
 # 10개의 코어(0-9)를 사용하여 빌드 실행
-KAS_BUILD_DIR=machine/qemuarm64/build taskset -c 0-9 ~/.local/bin/kas build manifest/qemuarm64/kas-qemuarm64.yml
+# 10개의 코어(0-9)를 사용하여 빌드 실행
+./scripts/build.sh qemuarm64
 ```
 
 ### 에뮬레이터 실행 (QEMU)
 ```bash
 # 빌드 완료 후 nographic 모드로 부팅
-KAS_BUILD_DIR=machine/qemuarm64/build ~/.local/bin/kas shell manifest/qemuarm64/kas-qemuarm64.yml -c "runqemu nographic slirp"
+# 빌드 완료 후 nographic 모드로 부팅
+./scripts/qemu.sh
 ```
 *   **로그인**: `root` (비밀번호 없음 - `debug-tweaks` 적용됨)
 *   **종료**: `Ctrl + A` 누른 후 `X`
@@ -67,7 +70,7 @@ KAS_BUILD_DIR=machine/qemuarm64/build ~/.local/bin/kas shell manifest/qemuarm64/
 
 | 구분 | 물리적 경로 | 주요 내용 및 용도 | 용량(예상) |
 | :--- | :--- | :--- | :--- |
-| **Main Build** | `machine/qemuarm64/build/` | 비트베이크 빌드가 실제로 일어나는 핵심 공간 | **~60 GB** |
+| **Main Build** | `output/qemuarm64/build/` | 비트베이크 빌드가 실제로 일어나는 핵심 공간 | **~60 GB** |
 | **Deploy** | `.../build/tmp/deploy/images/` | 커널, RootFS 등 **최종 결과물**이 생성되는 곳 | **~300 MB** |
 | **WORKDIR** | `.../build/tmp/work/` | 각 패키지별 컴파일/패키징 중간 작업 공간 | (Build 포함) |
 | **Log** | `.../build/tmp/log/` | 빌드 전체 프로세스의 통합 실행 로그 | < 100 MB |

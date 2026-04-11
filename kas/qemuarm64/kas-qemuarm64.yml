@@ -52,6 +52,8 @@ local_conf_header:
     BB_NUMBER_THREADS = "10"
     PARALLEL_MAKE = "-j 10"
     LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+    # 비밀번호 없는 root 로그인을 허용 (개발용)
+    EXTRA_IMAGE_FEATURES += "debug-tweaks"
     # QEMU 가상머신 부팅을 위한 메타데이터 파일 생성 옵션 활성화
     IMAGE_CLASSES += "qemuboot"
 

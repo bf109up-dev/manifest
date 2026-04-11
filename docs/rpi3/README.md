@@ -11,7 +11,8 @@
 ### 시스템 빌드
 ```bash
 # 프로젝트 루트(manifest)로 이동
-cd /home/yang/work/yocto/ai-agent_test0/test1/manifest
+# 프로젝트 루트(manifest)로 이동
+cd /home/yang/work/yocto/test-20260409/manifest
 
 # 전용 빌드 스크립트를 사용하여 빌드 실행 (RPI3 타겟)
 ./scripts/build.sh rpi3
