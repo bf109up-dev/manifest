@@ -1,7 +1,5 @@
 header:
   version: 14
-  includes:
-   - kas-qemuarm64-lock.yml
 
 
 distro: product
